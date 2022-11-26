@@ -9,7 +9,11 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 import sklearn
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 from sklearn.feature_extraction.text import CountVectorizer
+nltk.download('words')
+from nltk.corpus import words
 
 def main(newData):
 	# Read in training data
@@ -56,6 +60,20 @@ def dataRead(directory,spamham):
 		for token in wordlist:
 		    if token.lower() in stopwords.words('english'):
 		        wordlist.remove(token)
+
+		# Stem and lemmatize words (convert into base form)
+		ps = nltk.PorterStemmer()
+		wordlist = [ps.stem(word) for word in wordlist]
+		wn = nltk.WordNetLemmatizer()
+		wordlist = [wn.lemmatize(word, pos = 'v') for word in wordlist]
+		wordlist = [wn.lemmatize(word, pos = 'n') for word in wordlist]
+
+		#TODO: THIS IS REMOVING OUR NUMBER PLACEHOLDERS
+		# Remove invalid words (replace with a placeholder?)
+		for word in wordlist:
+			if word not in words.words():
+				word = 1
+		# wordlist = list(filter(lambda x: x in words.words(), wordlist))
 
 		# Add data to frame
 		df.loc[len(df.index)] = [spamham, wordlist] 
