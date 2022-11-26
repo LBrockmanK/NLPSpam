@@ -12,48 +12,18 @@ from nltk.corpus import stopwords
 def main(newData):
 	# Read in training data
 	# Delete the first blank line and everything preceding it
+	#df = pd.DataFrame(columns=['Class','Content'])
 
 	if(newData == True): # Re-process training data
-		df = dataRead('TrainingData/Ham')
-		df = pd.DataFrame(columns=['Class', 'Content', 'Length'])
+		df = dataRead('TrainingData/Ham',False)
+		df = pd.concat([df, dataRead('TrainingData/Spam',True)], axis=0)
 
-		directory = 'TrainingData/Ham'
+	print(df)
+	#else: # Read preprocessed training data from file
 
-		# Read Ham Data
-		directory = 'TrainingData/Ham'
-		for file in os.listdir(directory):
-			f = open(directory+'/'+file,'r')
-			body = f.read()
-
-			# delete all text before the first blank line (removes header info)
-			header = body.find('\n\n')+2
-			body = body[header:]
-
-			# delete text between <''> (removes formatting info)
-			body = re.sub(r'\<.*?\>','',body)
-
-			# Get length of body
-			length = len(body)
-
-			# Remove punctuation
-			body = body.translate(str.maketrans('', '', string.punctuation))
-
-			# Convert to a list
-			wordlist = list(body.split(" "))
-			#TODO: Still have some bad characters / strings in here
-
-			# Remove stop words
-			for token in wordlist:
-			    if token.lower() in stopwords.words('english'):
-			        wordlist.remove(token)
-
-			print(wordlist)
-			f.close()
-			break
-	else: # Read preprocessed training data from file
-
-def dataRead(directory):
+def dataRead(directory,spamham):
 	# Read Data
+	df = pd.DataFrame(columns=['Class','Content'])
 	for file in os.listdir(directory):
 		f = open(directory+'/'+file,'r')
 		body = f.read()
@@ -63,25 +33,31 @@ def dataRead(directory):
 		body = body[header:]
 
 		# delete text between <''> (removes formatting info)
-		body = re.sub(r'\<.*?\>','',body)
+		body = re.sub(r'\<.*?\>',' ',body)
 
-		# Get length of body
-		length = len(body)
+		# body = re.sub(r'\n',' ',body)
+		# remove all whitespace related characters
+		body = " ".join(body.split())
 
 		# Remove punctuation
 		body = body.translate(str.maketrans('', '', string.punctuation))
 
+		# Replace digits with 0, all numbers will be considered the same word for our analysis
+		body = re.sub(r'\d+', '0', body)
+
 		# Convert to a list
 		wordlist = list(body.split(" "))
-		#TODO: Still have some bad characters / strings in here
 
 		# Remove stop words
 		for token in wordlist:
 		    if token.lower() in stopwords.words('english'):
 		        wordlist.remove(token)
 
-		print(wordlist)
+		# Add data to frame
+		df.loc[len(df.index)] = [spamham, wordlist] 
 		f.close()
 		break
+
+	return df
 
 main(True)
