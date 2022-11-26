@@ -8,6 +8,8 @@ import string
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
+import sklearn
+from sklearn.feature_extraction.text import CountVectorizer
 
 def main(newData):
 	# Read in training data
@@ -18,8 +20,11 @@ def main(newData):
 		df = dataRead('TrainingData/Ham',False)
 		df = pd.concat([df, dataRead('TrainingData/Spam',True)], axis=0)
 
-	print(df)
-	#else: # Read preprocessed training data from file
+		wordslist = df.Content.values.tolist()
+	else: # Read preprocessed training data from file
+		print("TODO: Implement preprocessed data read")
+
+	print(wordslist)
 
 def dataRead(directory,spamham):
 	# Read Data
@@ -35,7 +40,6 @@ def dataRead(directory,spamham):
 		# delete text between <''> (removes formatting info)
 		body = re.sub(r'\<.*?\>',' ',body)
 
-		# body = re.sub(r'\n',' ',body)
 		# remove all whitespace related characters
 		body = " ".join(body.split())
 
