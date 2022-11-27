@@ -11,7 +11,7 @@ from nltk.corpus import stopwords
 import sklearn
 nltk.download('wordnet')
 nltk.download('omw-1.4')
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 nltk.download('words')
 from nltk.corpus import words
 
@@ -21,14 +21,31 @@ def main(newData):
 	#df = pd.DataFrame(columns=['Class','Content'])
 
 	if(newData == True): # Re-process training data
+		# Collect bag of words for each training sample
 		df = dataRead('TrainingData/Ham',False)
 		df = pd.concat([df, dataRead('TrainingData/Spam',True)], axis=0)
 
-		wordslist = df.Content.values.tolist()
+		# Vectorize training data
+		corpus = df.Content.values.tolist()
+		
+		tfidfvectorizer = TfidfVectorizer(lowercase = 'false', max_features = None)
+
+		# TODO: Insert relevant data back to our dataframe, probably by extracting each array row and replace our df content with it
+		tfidf_wm = tfidfvectorizer.fit_transform(corpus)
+		tfidf_tokens = tfidfvectorizer.get_feature_names_out()
+
+		currentrow = 0;
+		for row in df:
+			# TODO: Pick up here - Get array data into dataframe
+
+		df_tfidfvect = pd.DataFrame(data = tfidf_wm.toarray())
+		print(df_tfidfvect)
+
+		#TODO: Save final corpus
 	else: # Read preprocessed training data from file
 		print("TODO: Implement preprocessed data read")
 
-	print(wordslist)
+	#print(bag_of_words)
 
 def dataRead(directory,spamham):
 	# Read Data
@@ -52,6 +69,7 @@ def dataRead(directory,spamham):
 
 		# Replace digits with 0, all numbers will be considered the same word for our analysis
 		body = re.sub(r'\d+', '0', body)
+		numbers = body.count('0')
 
 		# Convert to a list
 		wordlist = list(body.split(" "))
@@ -68,15 +86,26 @@ def dataRead(directory,spamham):
 		wordlist = [wn.lemmatize(word, pos = 'v') for word in wordlist]
 		wordlist = [wn.lemmatize(word, pos = 'n') for word in wordlist]
 
-		#TODO: THIS IS REMOVING OUR NUMBER PLACEHOLDERS
-		# Remove invalid words (replace with a placeholder?)
-		for word in wordlist:
-			if word not in words.words():
-				word = 1
-		# wordlist = list(filter(lambda x: x in words.words(), wordlist))
+		# Remove invalid words
+		wordlist = list(filter(lambda x: x != '0', wordlist))
+		mispelled = len(wordlist)
+		wordlist = list(filter(lambda x: x in words.words(), wordlist))
+		mispelled = mispelled-len(wordlist)
+
+		# Add placeholders for numbers and mispelled words (000 and 111 respectively)
+		while numbers > 0:
+			wordlist.append('000')
+			numbers = numbers-1
+
+		while mispelled > 0:
+			wordlist.append('111')
+			mispelled = mispelled-1
+
+		# Convert list back to string for input to vectorizer later
+		body = ' '.join([str(item) for item in wordlist])
 
 		# Add data to frame
-		df.loc[len(df.index)] = [spamham, wordlist] 
+		df.loc[len(df.index)] = [spamham, body] 
 		f.close()
 		break
 
