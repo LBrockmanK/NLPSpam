@@ -33,19 +33,23 @@ def main(newData):
 		# TODO: Insert relevant data back to our dataframe, probably by extracting each array row and replace our df content with it
 		tfidf_wm = tfidfvectorizer.fit_transform(corpus)
 		tfidf_tokens = tfidfvectorizer.get_feature_names_out()
+		df_tfidfvect = tfidf_wm.toarray()
+		
+		# Replace content with tf-idf
+		for index, row in df.iterrows():
+			tfidflist = df_tfidfvect.tolist()
+			df['Content'] = tfidflist
 
-		currentrow = 0;
-		for row in df:
-			# TODO: Pick up here - Get array data into dataframe
-
-		df_tfidfvect = pd.DataFrame(data = tfidf_wm.toarray())
-		print(df_tfidfvect)
-
-		#TODO: Save final corpus
+		# Save data for future use
+		df.reset_index(drop=True, inplace=True)
+		df.to_csv('TrainingData/tfidf.csv')
+		
 	else: # Read preprocessed training data from file
-		print("TODO: Implement preprocessed data read")
+		#load dataframe from csv
+		df = pd.read_csv('TrainingData/tfidf.csv')
+		df.drop(df.columns[df.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
 
-	#print(bag_of_words)
+	print(df)
 
 def dataRead(directory,spamham):
 	# Read Data
@@ -111,4 +115,4 @@ def dataRead(directory,spamham):
 
 	return df
 
-main(True)
+main(False)
