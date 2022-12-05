@@ -53,6 +53,7 @@ def main(newData):
 
 def dataRead(directory,spamham):
 	# Read Data
+	i = 0 # Temporary limit TODO: Remove
 	df = pd.DataFrame(columns=['Class','Content'])
 	for file in os.listdir(directory):
 		f = open(directory+'/'+file,'r')
@@ -111,7 +112,10 @@ def dataRead(directory,spamham):
 		# Add data to frame
 		df.loc[len(df.index)] = [spamham, body] 
 		f.close()
-		break
+
+		i = i+1
+		if(i == 50):
+			break
 
 	return df
 
