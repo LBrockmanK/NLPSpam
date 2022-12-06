@@ -14,6 +14,8 @@ nltk.download('omw-1.4')
 from sklearn.feature_extraction.text import TfidfVectorizer
 nltk.download('words')
 from nltk.corpus import words
+import svc
+from ast import literal_eval
 
 def main(newData):
 	# Read in training data
@@ -36,6 +38,7 @@ def main(newData):
 		df_tfidfvect = tfidf_wm.toarray()
 		
 		# Replace content with tf-idf
+		#TODO: I think this might be doing redundant work, should be row['Content'] instead of DF?
 		for index, row in df.iterrows():
 			tfidflist = df_tfidfvect.tolist()
 			df['Content'] = tfidflist
@@ -49,7 +52,10 @@ def main(newData):
 		df = pd.read_csv('TrainingData/tfidf.csv')
 		df.drop(df.columns[df.columns.str.contains('unnamed',case = False)],axis = 1, inplace = True)
 
-	print(df)
+		#This converts our lists of tfidf into a string from a list, need to convert it back to a list of numbers
+		df['Content'] = df['Content'].apply(literal_eval)
+
+	svc.svcmodel(df)
 
 def dataRead(directory,spamham):
 	# Read Data
