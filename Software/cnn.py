@@ -13,7 +13,14 @@ def cnnmodel(df):
 	col_list = df.Content.values.tolist()
 	vectorarray = np.array(col_list)
 
-	X_train, X_test, y_train, y_test = train_test_split(vectorarray, df['Class'], test_size=0.20, random_state = 50)
+	class_list = df.Class.values.tolist()
+	classarray = np.zeros((len(class_list),2))
+
+	# Convert classification into 2 dimensions to match the 2 output nodes for the neural network
+	for idx, i in enumerate(classarray):
+		classarray[idx] = [class_list[idx],1-class_list[idx]]
+
+	X_train, X_test, y_train, y_test = train_test_split(vectorarray, classarray, test_size=0.20, random_state = 50)
 	
 	# build the model
 	m = Sequential()
@@ -35,11 +42,23 @@ def cnnmodel(df):
 	# setting and training
 	m.compile(loss="categorical_crossentropy", metrics=['accuracy'])
 	history  = m.fit(X_train, y_train,verbose=0)
+	print(history.history)
 	print(history.history["accuracy"])
 
 	# testing
-	predictions = m.predict(X_test)
+	# predictions = m.predict(X_test)
+	#convert neural network output into true false list
+	y_pred=m.predict(X_test) 
+	y_pred=np.argmax(y_pred, axis=1)
+	predictions=np.argmax(y_test, axis=1)
+
+	#list ends up inverts true false from our original calssifications
+	for idx, i in enumerate(predictions):
+		predictions[idx] = 1-predictions[idx]
+
+	print(predictions)
 	print("CNN Report: ")
+	X_train, X_test, y_train, y_test = train_test_split(vectorarray, df['Class'], test_size=0.20, random_state = 50)
 	print (classification_report(y_test, predictions))
 	print("CNN Confusion Matrix: ")
 	print(confusion_matrix(y_test,predictions))

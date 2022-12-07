@@ -1,16 +1,18 @@
 # TODO:
 # Create a function to take parameter inputs and return a trained svc model, possibly check if the model already exists, possibly return some diagnostic data
-from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from collections import Counter
-from sklearn.metrics import classification_report,confusion_matrix
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report,confusion_matrix
 import numpy as np
 
 def svcmodel(df):
 	# print(df.shape[0])
 	# print(len(df["Content"].values[0]))
 	# vectors = np.zeros(shape=(df.shape[0],len(df["Content"].values[0])))
+
+	#Format data (probably move this to main function?)
 	col_list = df.Content.values.tolist()
 	vectorarray = np.array(col_list)
 
