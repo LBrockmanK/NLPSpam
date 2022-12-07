@@ -15,6 +15,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 nltk.download('words')
 from nltk.corpus import words
 import svc
+import cnn
 from ast import literal_eval
 
 def main(newData):
@@ -55,7 +56,8 @@ def main(newData):
 		#This converts our lists of tfidf into a string from a list, need to convert it back to a list of numbers
 		df['Content'] = df['Content'].apply(literal_eval)
 
-	svc.svcmodel(df)
+	# svc.svcmodel(df)
+	cnn.cnnmodel(df)
 
 def dataRead(directory,spamham):
 	# Read Data

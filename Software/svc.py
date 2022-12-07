@@ -18,4 +18,7 @@ def svcmodel(df):
 	clf = SVC(kernel='linear').fit(X_train, y_train)
 
 	predictions = clf.predict(X_test)
-	print('predicted', predictions)
+	print("SVC Report: ")
+	print (classification_report(y_test, predictions))
+	print("SVC Confusion Matrix: ")
+	print(confusion_matrix(y_test,predictions))
