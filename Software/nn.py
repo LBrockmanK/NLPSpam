@@ -1,12 +1,12 @@
 # TODO:
-# Create a function to take parameter inputs and return a trained cnn model, possibly check if the model already exists, possibly return some diagnostic data
+# Create a function to take parameter inputs and return a trained nn model, possibly check if the model already exists, possibly return some diagnostic data
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report,confusion_matrix
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Rescaling, Conv1D, Dense, Flatten, MaxPooling1D, Dropout
+from tensorflow.keras.layers import Rescaling, Dense, Flatten, MaxPooling1D, Dropout
 # Create based on other project, will need to change input format see GloVe
-def cnnmodel(df):
+def nnmodel(df):
 	#Format data
 	col_list = df.Content.values.tolist()
 	vectorarray = np.array(col_list)
@@ -22,8 +22,7 @@ def cnnmodel(df):
 	
 	# build the model
 	m = Sequential()
-	m.add(Conv1D(32, 2, activation='relu',input_shape=(vectorarray.shape[1],1)))
-	m.add(Dense(32, activation='relu'))
+	m.add(Dense(32, activation='relu',input_shape=(vectorarray.shape[1],1)))
 	m.add(MaxPooling1D())
 	m.add(Flatten())
 	m.add(Dense(128, activation='relu'))
@@ -47,8 +46,8 @@ def cnnmodel(df):
 		predictions[idx] = 1-predictions[idx]
 
 	print(predictions)
-	print("CNN Report: ")
+	print("NN Report: ")
 	X_train, X_test, y_train, y_test = train_test_split(vectorarray, df['Class'], test_size=0.20, random_state = 50)
 	print (classification_report(y_test, predictions))
-	print("CNN Confusion Matrix: ")
+	print("NN Confusion Matrix: ")
 	print(confusion_matrix(y_test,predictions))

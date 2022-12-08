@@ -8,11 +8,7 @@ from sklearn.metrics import classification_report,confusion_matrix
 import numpy as np
 
 def svcmodel(df):
-	# print(df.shape[0])
-	# print(len(df["Content"].values[0]))
-	# vectors = np.zeros(shape=(df.shape[0],len(df["Content"].values[0])))
-
-	#Format data (probably move this to main function?)
+	#Format data
 	col_list = df.Content.values.tolist()
 	vectorarray = np.array(col_list)
 

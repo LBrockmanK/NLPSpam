@@ -16,13 +16,13 @@ nltk.download('words')
 from nltk.corpus import words
 import svc
 import cnn
+import nn
 from ast import literal_eval
+import time
 
 def main(newData):
+	starttime = time.time()
 	# Read in training data
-	# Delete the first blank line and everything preceding it
-	#df = pd.DataFrame(columns=['Class','Content'])
-
 	if(newData == True): # Re-process training data
 		# Collect bag of words for each training sample
 		df = dataRead('TrainingData/Ham',False)
@@ -33,13 +33,11 @@ def main(newData):
 		
 		tfidfvectorizer = TfidfVectorizer(lowercase = 'false', max_features = None)
 
-		# TODO: Insert relevant data back to our dataframe, probably by extracting each array row and replace our df content with it
 		tfidf_wm = tfidfvectorizer.fit_transform(corpus)
 		tfidf_tokens = tfidfvectorizer.get_feature_names_out()
 		df_tfidfvect = tfidf_wm.toarray()
 		
 		# Replace content with tf-idf
-		#TODO: I think this might be doing redundant work, should be row['Content'] instead of DF?
 		for index, row in df.iterrows():
 			tfidflist = df_tfidfvect.tolist()
 			df['Content'] = tfidflist
@@ -55,9 +53,24 @@ def main(newData):
 
 		#This converts our lists of tfidf into a string from a list, need to convert it back to a list of numbers
 		df['Content'] = df['Content'].apply(literal_eval)
+	print("Time to prepare data: ")
+	print(time.time() - starttime)
+	starttime = time.time()
 
-	# svc.svcmodel(df)
+	svc.svcmodel(df)
+	print("Time to prepare SVC: ")
+	print(time.time() - starttime)
+	starttime = time.time()
+
 	cnn.cnnmodel(df)
+	print("Time to prepare CNN: ")
+	print(time.time() - starttime)
+	starttime = time.time()
+
+	nn.nnmodel(df)
+	print("Time to prepare NN: ")
+	print(time.time() - starttime)
+	starttime = time.time()
 
 def dataRead(directory,spamham):
 	# Read Data
