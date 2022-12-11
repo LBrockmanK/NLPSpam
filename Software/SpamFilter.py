@@ -77,8 +77,11 @@ def dataRead(directory,spamham):
 	i = 0 # Temporary limit TODO: Remove
 	df = pd.DataFrame(columns=['Class','Content'])
 	for file in os.listdir(directory):
-		f = open(directory+'/'+file,'r')
+		f = open(directory+'/'+file,'r', errors="ignore")
 		body = f.read()
+
+		body = body.encode("ascii", "ignore")
+		body = body.decode()
 
 		# delete all text before the first blank line (removes header info)
 		header = body.find('\n\n')+2
@@ -135,7 +138,7 @@ def dataRead(directory,spamham):
 		f.close()
 
 		i = i+1
-		if(i == 50):
+		if(i == 1000):
 			break
 
 	return df
