@@ -1,5 +1,9 @@
 # NLPSpam
 
+Instructions:
+To run program, execute Train.bat in root folder
+	At the end of SpamFilter.py is a main call with a boolean argument, if set to false the program will use saved data and take ~30 seconds to complete, if set to true it will recreate vectorized data at take roughly 16 hours to complete
+
 Folders
 
 Models: Stores previousely trained models
